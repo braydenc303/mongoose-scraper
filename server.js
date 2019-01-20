@@ -12,6 +12,7 @@ var expHb = require("express-handlebars");
 //Require all models
 var db = require("./models");
 
+//Set localhost port
 var PORT = 3000;
 
 //Initialize Express
