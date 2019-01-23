@@ -3,7 +3,7 @@ $.getJSON("/articles", function(data) {
     //For each one
     for (var i = 0; i < data.length; i++) {
         //Display the appropriate information on the page
-        $("#articles").append("<p data-id='" + data[i]._id+ "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+        $("#articles").append("<p data-id='" + data[i]._id+ "'>" + data[i].title + "<br />" + data[i].link + "</p>").append("<button class='delete' data-id=" + data[i]._id + ">Delete!</button>");
     }
 });
 
@@ -29,14 +29,14 @@ $(document).on("click", "p", function() {
         //A text area to add a new note body
         $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
         //A button to submit a new note, with the id of the article saved to it
-        $("notes").append("<button data=id='" + data._id + "' id='savenote'>Save Note</button>");
+        $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
 
         //If there's a note in the article
         if (data.note) {
             //Place the title of the note in the title input
             $("#titleinput").val(data.note.title);
             //Place the body of the the note in the body textarea
-            $("#bodinput").val(data.note.body);
+            $("#bodyinput").val(data.note.body);
         }
     });
 });
@@ -68,4 +68,47 @@ $(document).on("click", "#savenote", function() {
     //Also, remove the values entered in the input fields
     $("#titleinput").val("");
     $("#bodyinput").val("");
+});
+
+//Logic for clear button
+//Look up how to delete all records in a collection or pass in an empty object.
+$(document).on("click", "#clear", function(){
+    $.ajax({
+        method: "DELETE",
+        url: "/clear"
+    })
+    .then(function(res) {
+        console.log(res);
+        location.reload();
+    })
+});
+
+//Logic for delete button
+//ajax method: delete where
+$(document).on("click", ".delete", function() {
+    //Get the id associated with the article from the submit button
+    var thisId = $(this).attr("data-id");
+
+    //Run a delete request to delete an article and it's associated note
+    //This is deleting the article, but not the note currently.
+    $.ajax({
+        method: "DELETE",
+        url: "/articles/" + thisId,
+    })
+    .then(function(res){
+        console.log(res);
+        location.reload();
+    })
+});
+
+//Logic for scrape button
+$(document).on("click", "#scrape", function() {
+    $.ajax({
+        method: "GET",
+        url: "/scrape"
+    })
+    .then(function(res){
+        console.log(res);
+        location.reload("/");
+    })
 });
